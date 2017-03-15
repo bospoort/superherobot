@@ -1,0 +1,12 @@
+{
+  "name": "contentmoderationbot",
+  "description": "Sample bot to work with Content Moderation",
+  "dependencies": {
+    "azure-storage": "^2.1.0",
+    "botbuilder": "^3.7.0",
+    "node-uuid": "^1.4.7",
+    "restify": "^4.3.0",
+    "unirest": "^0.5.1"
+  },
+  "engine": "node >= 0.4.1"
+}

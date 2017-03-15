@@ -1,0 +1,27 @@
+{
+  "persistedFaces": [
+    {
+      "persistedFaceId": "31a9ed3c-fe57-4770-9b2d-006992b8d84b",
+      "userData": "Captain America"
+    },
+    {
+      "persistedFaceId": "3f78e96a-8d6b-45d3-ad44-b48069668ad0",
+      "userData": "Thor"
+    },
+    {
+      "persistedFaceId": "5a92fd84-c077-4593-bf07-7b63bec87d08",
+      "userData": "Widow"
+    },
+    {
+      "persistedFaceId": "d2330657-52e2-44f7-af2a-4d37b1f1de55",
+      "userData": "Wolverine"
+    },
+    {
+      "persistedFaceId": "3c74ffe7-20b7-4fb6-ab81-cc939fbd6d74",
+      "userData": "Iron Man"
+    }
+  ],
+  "faceListId": "superheroeslistid",
+  "name": "super_heroes",
+  "userData": "List of superheroes"
+}
