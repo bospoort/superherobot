@@ -29,32 +29,24 @@ server.post('/api/messages', connector.listen());
 
 bot.dialog('/', [ 
     function (session, args) {
-        builder.Prompts.text(session, 'Please send me a video clip of you as a superhero.');
+        builder.Prompts.attachment(session, 'Please send me a video clip of you as a superhero.');
     },
     function (session, results){
-        var input = null;
-        //treat the text as url  if there is no attachment
-        if (!session.message.attachments[0]){
-            input = session.message.text;
-            filterAndMatch(session, input);
-        }
-        else{
-            input = session.message.attachments[0];
-            var ext = input.contentUrl.substr(input.contentUrl.lastIndexOf('.'));
-            var fileName = uuid.v1() +  ext;
-            var utils = require('./utils.js');
+        var contentURL = results.response[0].contentUrl;
+        var ext = contentURL.substr(contentURL.lastIndexOf('.'));
+        var fileName = uuid.v1() +  ext;
+        var utils = require('./utils.js');
 
-            utils.downloadMedia(input.contentUrl, fileName, function (error) {
-                utils.uploadMediaToBlob(fileName, function(error, url){
-                    if (error){
-                        session.send('Failed to upload image to blob storage.');
-                    }
-                    else{
-                        filterAndMatch(session, url);
-                    }
-                });
+        utils.downloadMedia(contentURL, fileName, function (error) {
+            utils.uploadMediaToBlob(fileName, function(error, blobURL){
+                if (error){
+                    session.send('Failed to upload image to blob storage.');
+                }
+                else{
+                    filterAndMatch(session, blobURL);
+                }
             });
-        }
+        });
     }
 ]);
 
