@@ -26,4 +26,3 @@ module.exports = function(contentType, workflow, input, callback) {
             return callback(res.error, res.body );
         });
 }
-

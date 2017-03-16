@@ -29,20 +29,17 @@ server.post('/api/messages', connector.listen());
 
 bot.dialog('/', [ 
     function (session, args) {
-        builder.Prompts.text(session, 'Hi, please send me a video clip of you as a superhero.');
+        builder.Prompts.text(session, 'Please send me a video clip of you as a superhero.');
     },
     function (session, results){
         var input = null;
-        var format = '';
         //treat the text as url  if there is no attachment
         if (!session.message.attachments[0]){
-            format = 'ImageUrl';
             input = session.message.text;
             filterAndMatch(session, input);
         }
         else{
             input = session.message.attachments[0];
-            format = input.contentType;
             var ext = input.contentUrl.substr(input.contentUrl.lastIndexOf('.'));
             var fileName = uuid.v1() +  ext;
             var utils = require('./utils.js');
@@ -78,11 +75,20 @@ function filterAndMatch(session, input){
         }
         //find super hero
         var matchSuperHero = require('./match.js');
-        matchSuperHero(input, function(error, res){
+        matchSuperHero(input, function(error, name, confidence, refurl){
             if (error){
-                session.endDialog(error);
+                session.send(error);
             }else{
-                session.endDialog(res);
+                // Create and send attachment
+                var attachment = {
+                    contentUrl: refurl,
+                    contentType: 'image/jpg',
+                    name: name
+                };
+                var msg = new builder.Message(session)
+                    .addAttachment(attachment)
+                    .text("You look most like "+ name + ' (confidence: '+ confidence + ')');
+                session.send(msg);
             }
         });
     });

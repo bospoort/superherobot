@@ -20,7 +20,7 @@ module.exports = function(imageUrl, callback) {
         })
         .end(function (res) {
             if (res.error){
-                return callback(res.error, res.body );
+                return callback(res.error );
             }else{
                 matchFaceToHero(res.body[0].faceId, callback)
             }
@@ -48,7 +48,8 @@ function matchFaceToHero(faceID, callback){
             for  ( var i = 0 ; i < len ; i++){
                 if (list.persistedFaces[i].persistedFaceId === heroId){
                     var hero = list.persistedFaces[i].userData;
-                    return callback(null, "You are a "+ hero + ' (confidence: '+ conf + ')');
+                    var refurl = config.superheroURL+hero+'.jpg';
+                    return callback(null, hero, conf, refurl);
                 }
             }
             return callback("Could not find a match..." );
