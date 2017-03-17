@@ -43,3 +43,54 @@ module.exports.uploadMediaToBlob = function(image, cb ){
         }
     });
 }
+
+module.exports.storeContentIdForUser = function( contentId, address, contentUrl, cb ){
+    var accountName     = config.blobAccountName;
+    var accountKey      = config.blobAccountKey;
+    var tableName       = config.reviewjobsTableName;
+    var template        = 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net';
+
+    var connectionstring= util.format(template, accountName, accountKey);
+    var tableService    = azure.createTableService( connectionstring );
+
+    tableService.createTableIfNotExists(tableName, 
+                                        function(error, result, response){
+        if(!error){
+            var entGen = azure.TableUtilities.entityGenerator;
+            var review = {
+                PartitionKey: entGen.String("fakeid"),
+                RowKey: entGen.String(contentId),
+                Address: address, 
+                Url: contentUrl
+            };            
+            tableService.insertEntity(tableName, review, function (error, result, response) {
+                if(!error){
+                    cb(null,result);
+                }
+            });    
+        }
+    });
+}
+
+module.exports.retrieveDataUrlforReview = function(jobId, contentId, cb ){
+    var accountName     = config.blobAccountName;
+    var accountKey      = config.blobAccountKey;
+    var tableName       = config.reviewjobsTableName;
+    var template        = 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net';
+
+    var connectionstring= util.format(template, accountName, accountKey);
+    var tableService    = azure.createTableService( connectionstring );
+
+    tableService.createTableIfNotExists(tableName, 
+                                        function(error, result, response){
+        if(!error){
+            tableService.retrieveEntity(tableName, contentId, "fakeid", function (error, result, response) {
+                if(!error){
+                    cb(null,result.Address, result.Url);
+                }else{
+                    cb(error.code);
+                }
+            });    
+        }
+    });
+}

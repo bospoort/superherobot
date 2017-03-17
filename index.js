@@ -1,6 +1,7 @@
 var restify = require('restify');
 var builder = require('botbuilder');
 var uuid    = require('node-uuid');
+var utils   = require('./utils.js');
 
 //set up server
 var server = restify.createServer();
@@ -33,9 +34,10 @@ bot.dialog('/', [
     },
     function (session, results){
         var contentURL = results.response[0].contentUrl;
-        var ext = contentURL.substr(contentURL.lastIndexOf('.'));
-        var fileName = uuid.v1() +  ext;
-        var utils = require('./utils.js');
+        var name       = results.response[0].name;
+        var ext        = name.substr(name.lastIndexOf('.'))
+        var contentid  = uuid.v1();
+        var fileName   = contentid + ext;
 
         utils.downloadMedia(contentURL, fileName, function (error) {
             utils.uploadMediaToBlob(fileName, function(error, blobURL){
@@ -43,12 +45,39 @@ bot.dialog('/', [
                     session.send('Failed to upload image to blob storage.');
                 }
                 else{
-                    filterAndMatch(session, blobURL);
+                    reviewAndMatch(session, contentid, blobURL);
                 }
             });
         });
     }
 ]);
+
+function reviewAndMatch(session, contentid, input){
+    var review = require('./job.js');
+
+    review( "Image", 'butterfly', contentid, input, function(err, body) {
+        if (err) {
+            console.log('Error: '+err);         
+            session.endDialog('Oops. Something went wrong sending the content for review`.');
+            return;
+        }
+        var output = JSON.stringify(body);
+        console.log('Job review ID: ' + output);
+
+        var address = {
+            channelId: session.message.address.channelId,
+            serviceUrl: session.message.address.serviceUrl,
+            user: session.message.address.user,
+            bot: session.message.address.bot,
+            useAuth: true
+        };
+        var strAddress = JSON.stringify(address);
+
+        utils.storeContentIdForUser(contentid, strAddress, input, function(result){
+            session.endDialog('Your submission is in review (%s).', output);
+        });
+    });
+}
 
 function filterAndMatch(session, input){
     var moderate = require('./moderate.js');

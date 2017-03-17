@@ -19,7 +19,7 @@
             ],
             "env": {
                 "NODE_ENV": "development",
-                "port": "12345"
+                "port": "12346"
             },
             "console": "internalConsole",
             "sourceMaps": false,
