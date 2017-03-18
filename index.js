@@ -33,14 +33,16 @@ server.post('/review', function create(req, res, next) {
             }
             if (allowed==true){
                 goMatch = true;
-                text = 'This is good. We\'ll send it up';
             }
+            //create a message to send
             var msg = new builder.Message()
-                .address(JSON.parse(address))
-                .text(text);
+                .address(JSON.parse(address));
+            if(goMatch) {
+                findHero(msg, contentUrl);
+            }else{
+                msg.text(text);
                 bot.send(msg);
-            if(goMatch) 
-                findHero(bot.session, contentUrl);
+            }
         });
     });
 });
@@ -70,6 +72,7 @@ bot.dialog('/', [
                 }
                 else{
                     reviewAndMatch(session, contentid, blobURL);
+//                    moderateAndMatch(session, contentid, blobURL);
                 }
             });
         });
@@ -95,12 +98,12 @@ function reviewAndMatch (session, contentid, input){
     });
 }
 
-function moderateAndMatch (session, submittedImageUrl){
+function moderateAndMatch (session, contentid, submittedImageUrl){
     var moderate = require('./moderate.js');
     moderate( 'ImageUrl', submittedImageUrl, function(err, body) {
         if (err) {
             console.log('Error: '+err);         
-            session.send('Oops. Something went wrong in Content Moderation.');
+            session.endDialog('Oops. Something went wrong in Content Moderation.');
             return;
         }
         var output = JSON.stringify(body);
@@ -110,17 +113,17 @@ function moderateAndMatch (session, submittedImageUrl){
             session.send('This picture is a bit too daring. No go');
             return;
         }
-        match.findHero(session, submittedImageUrl);
+        findHero(session, submittedImageUrl);
     });
 }
 
-function findHero (session, submittedImageUrl){
-    match.getFaceId(submittedImageUrl._, function(error, faceId){
+function findHero (message, submittedImageUrl){
+    match.getFaceId(submittedImageUrl, function(error, faceId){
         if(error){
             session.send(error);
         }
         else {
-            match.matchFaceToHero(faceid, function(error, name, confidence, refurl){
+            match.matchFaceToHero(faceId, function(error, name, confidence, refurl){
                 if (error){
                     session.send(error);
                 }else{
@@ -130,10 +133,9 @@ function findHero (session, submittedImageUrl){
                         contentType: 'image/jpg',
                         name: name
                     };
-                    var msg = new builder.Message(session)
-                        .addAttachment(attachment)
+                    message.addAttachment(attachment)
                         .text("You look most like "+ name + ' (confidence: '+ confidence + ')');
-                    session.send(msg);
+                    bot.send(message);
                 }
             });
         }

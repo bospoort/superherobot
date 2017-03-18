@@ -24,7 +24,7 @@ module.exports.getFaceId = function(submittedImageUrl, callback) {
             if (res.error){
                 return callback(res.error );
             }else{
-                matchFaceToHero(res.body[0].faceId, callback)
+                callback(null, res.body[0].faceId)
             }
         });
 }

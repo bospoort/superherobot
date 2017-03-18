@@ -13,7 +13,7 @@ module.exports = function(contentType, workflow, contentid, input, callback) {
             ContentType: contentType,
             ContentId: contentid,
             WorkflowName: workflow,
-            CallBackEndpoint: 'http://9df9c29e.ngrok.io/review'
+            CallBackEndpoint: 'http://7f82e0aa.ngrok.io/review'
         })
         .headers({
             "Ocp-Apim-Subscription-Key":config.ocp_key, 

@@ -86,7 +86,7 @@ module.exports.retrieveDataUrlforReview = function(contentId, cb ){
         if(!error){
             tableService.retrieveEntity(tableName, "fakeid", contentId, function (error, result, response) {
                 if(!error){
-                    cb(null,result.Address._, result.Url);
+                    cb(null,result.Address._, result.Url._);
                 }else{
                     cb(error.code);
                 }
