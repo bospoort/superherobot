@@ -60,8 +60,8 @@ module.exports.storeContentIdForUser = function( contentId, address, contentUrl,
             var review = {
                 PartitionKey: entGen.String("fakeid"),
                 RowKey: entGen.String(contentId),
-                Address: address, 
-                Url: contentUrl
+                Address:entGen.String(address), 
+                Url: entGen.String(contentUrl)
             };            
             tableService.insertEntity(tableName, review, function (error, result, response) {
                 if(!error){
@@ -72,7 +72,7 @@ module.exports.storeContentIdForUser = function( contentId, address, contentUrl,
     });
 }
 
-module.exports.retrieveDataUrlforReview = function(jobId, contentId, cb ){
+module.exports.retrieveDataUrlforReview = function(contentId, cb ){
     var accountName     = config.blobAccountName;
     var accountKey      = config.blobAccountKey;
     var tableName       = config.reviewjobsTableName;
@@ -84,9 +84,9 @@ module.exports.retrieveDataUrlforReview = function(jobId, contentId, cb ){
     tableService.createTableIfNotExists(tableName, 
                                         function(error, result, response){
         if(!error){
-            tableService.retrieveEntity(tableName, contentId, "fakeid", function (error, result, response) {
+            tableService.retrieveEntity(tableName, "fakeid", contentId, function (error, result, response) {
                 if(!error){
-                    cb(null,result.Address, result.Url);
+                    cb(null,result.Address._, result.Url);
                 }else{
                     cb(error.code);
                 }

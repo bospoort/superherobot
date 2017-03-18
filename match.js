@@ -3,8 +3,10 @@
 var unirest = require("unirest");
 var auth    = require('./auth.js');
 var config  = require('./config.json');
+var utils   = require('./utils.js');
 
-module.exports = function(imageUrl, callback) {
+
+module.exports.getFaceId = function(submittedImageUrl, callback) {
     var detectFaceAPIURL = 'https://westus.api.cognitive.microsoft.com/face/v1.0/detect';
     var req = unirest.post(detectFaceAPIURL)
         .query({ 
@@ -16,7 +18,7 @@ module.exports = function(imageUrl, callback) {
             "Content-Type": 'application/json'
         })
         .send({
-            "url": imageUrl 
+            "url": submittedImageUrl 
         })
         .end(function (res) {
             if (res.error){
@@ -27,7 +29,7 @@ module.exports = function(imageUrl, callback) {
         });
 }
 
-function matchFaceToHero(faceID, callback){
+module.exports.matchFaceToHero = function (faceID, callback){
     var faceAPIURL = 'https://westus.api.cognitive.microsoft.com/face/v1.0/findsimilars';
     var req = unirest.post(faceAPIURL)
         .headers({
