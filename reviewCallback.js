@@ -1,7 +1,6 @@
 "use strict";
 
 var utils   = require('./utils.js');
-var builder = require('botbuilder');
 
 //Callback for the CM Moderator Studio API
 //This is invoked: 

@@ -3,6 +3,8 @@ var builder = require('botbuilder');
 var uuid    = require('node-uuid');
 var utils   = require('./utils.js');
 var match   = require('./match.js');
+var constdef= require('./constants.json');
+
 
 //set up server
 var server = restify.createServer();
@@ -14,6 +16,11 @@ server.listen(process.env.port || process.env.PORT || 3991, function () {
 var auth = require('./auth.js');
 auth.refreshToken();
 setInterval(auth.refreshToken, 15*60*1000);
+
+var fs = require('fs');
+if (!fs.existsSync(constdef.imageFolder)){
+    fs.mkdirSync(constdef.imageFolder);
+}
 
 //set up review callback
 server.use(restify.bodyParser());//this is needed to get body out of restify request...

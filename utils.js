@@ -4,11 +4,10 @@ var unirest = require('unirest');
 var azure   = require('azure-storage');
 var util    = require('util');
 var config  = require('./config.json');
-
-const imageFolder = './images/';
+var constdef= require('./constants.json');
 
 module.exports.downloadMedia = function(url, dest, cb ){
-    var file = fs.createWriteStream(imageFolder+dest);
+    var file = fs.createWriteStream(constdef.imageFolder+dest);
     var request = http.get(url, function(response) {
         response.pipe(file);
         file.on('finish', function() {
@@ -33,7 +32,7 @@ module.exports.uploadMediaToBlob = function(image, cb ){
         if(!error){
             blobService.createBlockBlobFromLocalFile(containerName,
                                                 image, 
-                                                imageFolder+image, 
+                                                constdef.imageFolder+image, 
                                                 function(error, result, response){
                 if(!error){
                     var url = config.blobStorageURL + image;
