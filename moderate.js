@@ -4,13 +4,33 @@ var unirest = require('unirest');
 var config = require('./config.json');
 var utils = require('./utils.js');
 var uuid = require('node-uuid');
+var auth = require('./auth.js');
 
-var baseUrl = 'https://westus.api.cognitive.microsoft.com/contentmoderator/moderate/v1.0/';
+module.exports.review = function(contentType, workflow, contentid, input, cb) {
+    unirest.post(config.review_url+'jobs')
+        .type("application/json")
+        .query({
+            ContentType: contentType,
+            ContentId: contentid,
+            WorkflowName: workflow,
+            CallBackEndpoint: 'http://1b9fac1c.ngrok.io/review'
+        })
+        .headers({
+            "Ocp-Apim-Subscription-Key":config.ocp_key, 
+            "authorization": auth.token
+        })
+        .send({
+            "ContentValue": input
+        })
+        .end(function (res) {
+            return cb(res.error, res.body );
+        });
+}
 
-module.exports = function(contentType, input, cb) {
+module.exports.moderate = function(contentType, input, cb) {
     switch (contentType){
         case 'ImageUrl':{
-            unirest.post(baseUrl+'ProcessImage/Evaluate')
+            unirest.post(config.moderation_url+'ProcessImage/Evaluate')
                 .headers({
                     'content-type': 'application/json',
                     'Ocp-Apim-Subscription-Key':config.ocp_key

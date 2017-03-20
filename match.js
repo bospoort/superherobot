@@ -5,7 +5,6 @@ var auth    = require('./auth.js');
 var config  = require('./config.json');
 var utils   = require('./utils.js');
 
-
 module.exports.getFaceId = function(submittedImageUrl, callback) {
     var detectFaceAPIURL = 'https://westus.api.cognitive.microsoft.com/face/v1.0/detect';
     var req = unirest.post(detectFaceAPIURL)

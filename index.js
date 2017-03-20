@@ -72,7 +72,7 @@ bot.dialog('/', [
                 }
                 else{
                     reviewAndMatch(session, contentid, blobURL);
-//                    moderateAndMatch(session, contentid, blobURL);
+                    //moderateAndMatch(session, contentid, blobURL);
                 }
             });
         });
@@ -80,9 +80,9 @@ bot.dialog('/', [
 ]);
 
 function reviewAndMatch (session, contentid, input){
-    var sendForReview = require('./job.js');
+    var moderate = require('./moderate.js');
 
-    sendForReview( "Image", 'butterfly', contentid, input, function(err, body) {
+    moderate.review( "Image", 'butterfly', contentid, input, function(err, body) {
         if (err) {
             console.log('Error: '+err);         
             session.endDialog('Oops. Something went wrong sending the content for review`.');
@@ -100,7 +100,7 @@ function reviewAndMatch (session, contentid, input){
 
 function moderateAndMatch (session, contentid, submittedImageUrl){
     var moderate = require('./moderate.js');
-    moderate( 'ImageUrl', submittedImageUrl, function(err, body) {
+    moderate.moderate( 'ImageUrl', submittedImageUrl, function(err, body) {
         if (err) {
             console.log('Error: '+err);         
             session.endDialog('Oops. Something went wrong in Content Moderation.');
@@ -113,7 +113,7 @@ function moderateAndMatch (session, contentid, submittedImageUrl){
             session.send('This picture is a bit too daring. No go');
             return;
         }
-        findHero(session, submittedImageUrl);
+        findHero(session.message, submittedImageUrl);
     });
 }
 
