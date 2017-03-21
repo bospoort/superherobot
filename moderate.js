@@ -7,13 +7,13 @@ var uuid = require('node-uuid');
 var auth = require('./auth.js');
 
 module.exports.review = function(contentType, workflow, contentid, input, cb) {
-    unirest.post(config.review_url+'jobs')
+    unirest.post(config.review_url+config.moderation_team+'/jobs')
         .type("application/json")
         .query({
             ContentType: contentType,
             ContentId: contentid,
             WorkflowName: workflow,
-            CallBackEndpoint: 'http://1b9fac1c.ngrok.io/review'
+            CallBackEndpoint: 'http://35482930.ngrok.io/review'
         })
         .headers({
             "Ocp-Apim-Subscription-Key":config.ocp_key, 

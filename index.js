@@ -3,8 +3,7 @@ var builder = require('botbuilder');
 var uuid    = require('node-uuid');
 var utils   = require('./utils.js');
 var match   = require('./match.js');
-var constdef= require('./constants.json');
-
+var config  = require('./config.json');
 
 //set up server
 var server = restify.createServer();
@@ -18,18 +17,19 @@ auth.refreshToken();
 setInterval(auth.refreshToken, 15*60*1000);
 
 var fs = require('fs');
-if (!fs.existsSync(constdef.imageFolder)){
-    fs.mkdirSync(constdef.imageFolder);
+if (!fs.existsSync(config.imageFolder)){
+    fs.mkdirSync(config.imageFolder);
 }
 
-//set up review callback
-server.use(restify.bodyParser());//this is needed to get body out of restify request...
+//this is needed to get body out of restify request...
+server.use(restify.bodyParser());
 
+//set up review callback
 server.post('/review', function create(req, res, next) {
     res.send('OK');//keep server happy
 
-    var handleReview = require('./reviewCallback.js'); 
-    handleReview(req, function(allowed, contentid){
+    var processReview = require('./reviewCallback.js'); 
+    processReview(req, function(allowed, contentid){
         utils.retrieveDataUrlforReview(contentid, function(error, address, contentUrl, cb){
             var text, goMatch = false;
             if (allowed===null){
@@ -89,7 +89,7 @@ bot.dialog('/', [
 function reviewAndMatch (session, contentid, input){
     var moderate = require('./moderate.js');
 
-    moderate.review( "Image", 'butterfly', contentid, input, function(err, body) {
+    moderate.review( "Image", config.workflow_name, contentid, input, function(err, body) {
         if (err) {
             console.log('Error: '+err);         
             session.endDialog('Oops. Something went wrong sending the content for review`.');
@@ -120,7 +120,8 @@ function moderateAndMatch (session, contentid, submittedImageUrl){
             session.send('This picture is a bit too daring. No go');
             return;
         }
-        findHero(session.message, submittedImageUrl);
+        var message = new builder.Message(session);
+        findHero(message, submittedImageUrl);
     });
 }
 
