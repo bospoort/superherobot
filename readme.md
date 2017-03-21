@@ -41,17 +41,14 @@ First you'll need actual Content Moderation keys:
 6. Go to keys and copy one of the values into ocp_key in config.json  
 
 Next create a storage account
-2. Click on the '+' sign to create a new resource
+1. Click on the '+' sign to create a new resource
 3. Search for 'Storage Account', select 'Microsoft Storage' and click create 
 4. Give it a name, and other settings (default is fine)
 5. Create appropriate resource groups and and other settings for this account.
 6. Copy the Storage account name and one of the keys into storageAccountName and storageAccountKey
 
-
-APIs dropdown and select Content Moderator under Vision, you can Get started for Free. It will ask you to sign in and to provide a team name. You will then be taken to the dashboard. 
-
 ## Getting the callback
-Content Moderator needs a callback for pictures when they are reviewed in Content Moderator studio. Since it might be hard to find your IP behind a firewall, you can set up the end point with ngrok: 
+Content Moderator needs a callback for pictures when they are reviewed in the Review UI. Since it might be hard to find your IP behind a firewall, you can set up the end point with ngrok: 
 ```
 ngrok http <port>.
 ```

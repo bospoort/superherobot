@@ -30,25 +30,27 @@ server.post('/review', function create(req, res, next) {
 
     var processReview = require('./reviewCallback.js'); 
     processReview(req, function(allowed, contentid){
-        utils.retrieveDataUrlforReview(contentid, function(error, address, contentUrl, cb){
-            var text, goMatch = false;
-            if (allowed===null){
-                text = 'Some actual human eyeballs would like to inspect your submission. Hold on...';
-            }
-            if (allowed==false){
-                text = 'Please submit another picture. This was a little too revealing';
-            }
-            if (allowed==true){
-                goMatch = true;
-            }
-            //create a message to send
-            var msg = new builder.Message()
-                .address(JSON.parse(address));
-            if(goMatch) {
-                findHero(msg, contentUrl);
-            }else{
-                msg.text(text);
-                bot.send(msg);
+        utils.retrieveDataUrlforReview(contentid, function(error, address, contentUrl){
+            if(!error){
+                var text, goMatch = false;
+                if (allowed===null){
+                    text = 'Some actual human eyeballs would like to inspect your submission. Hold on...';
+                }
+                if (allowed==false){
+                    text = 'Please submit another picture. This was a little too revealing';
+                }
+                if (allowed==true){
+                    goMatch = true;
+                }
+                //create a message to send
+                var msg = new builder.Message()
+                    .address(JSON.parse(address));
+                if(goMatch) {
+                    findHero(msg, contentUrl);
+                }else{
+                    msg.text(text);
+                    bot.send(msg);
+                }
             }
         });
     });
@@ -78,8 +80,8 @@ bot.dialog('/', [
                     session.send('Failed to upload image to blob storage.');
                 }
                 else{
-                    moderateAndMatch(session, contentid, blobURL);
-                    //reviewAndMatch(session, contentid, blobURL);
+                    //moderateAndMatch(session, contentid, blobURL);
+                    reviewAndMatch(session, contentid, blobURL);
                 }
             });
         });
