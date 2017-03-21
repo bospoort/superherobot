@@ -33,7 +33,7 @@ You will need to create a config.json file with the following keys.
 }   
 ```
 First you'll need actual Content Moderation keys: 
-1. Go to [Azure Portal](https://www.portal.azure.com) 
+1. Go to [Azure Portal](https://portal.azure.com) 
 2. Click on the '+' sign to create a new resource
 3. Search for 'Cognitive Services' and create the resource
 4. In the following API type drop down, select 'Content Moderator'
