@@ -34,8 +34,11 @@ module.exports.uploadMediaToBlob = function(image, cb ){
                                                 config.imageFolder+image, 
                                                 function(error, result, response){
                 if(!error){
-                    var url = config.blobStorageURL + image;
-                    cb(null,url);
+                    var blobUrl = util.format("https://%s.blob.core.windows.net/%s/%s", 
+                                              config.blobAccountName, 
+                                              config.containerName, 
+                                              image);
+                    cb(null,blobUrl);
                 }
             });    
         }
