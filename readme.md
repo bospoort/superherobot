@@ -17,8 +17,8 @@ You will need to create a config.json file with the following keys.
     "moderation_url":   "https://westus.api.cognitive.microsoft.com/contentmoderator/moderate/v1.0/",
     "review_url":       "https://westus.api.cognitive.microsoft.com/contentmoderator/review/v1.0/teams/",
 
-    "blobAccountName":  "{your-blob-account-name}",
-    "blobAccountKey":   "{your-blob-account-key}}",
+    "storageAccountName":  "{your-blob-account-name}",
+    "storageAccountKey":   "{your-blob-account-key}}",
     "containerName":    "images",
     "blobStorageURL":   "{your-blob-storage-url}",
     "tableStorageURL":  "{your-table-storage-url}",
@@ -38,6 +38,15 @@ First you'll need actual Content Moderation keys:
 3. Search for 'Cognitive Services' and create the resource
 4. In the following API type drop down, select 'Content Moderator'
 5. Create appropriate resource groups and and other settings for this account.
+6. Go to keys and copy one of the values into ocp_key in config.json  
+
+Next create a storage account
+2. Click on the '+' sign to create a new resource
+3. Search for 'Storage Account', select 'Microsoft Storage' and click create 
+4. Give it a name, and other settings (default is fine)
+5. Create appropriate resource groups and and other settings for this account.
+6. Copy the Storage account name and one of the keys into storageAccountName and storageAccountKey
+
 
 APIs dropdown and select Content Moderator under Vision, you can Get started for Free. It will ask you to sign in and to provide a team name. You will then be taken to the dashboard. 
 
