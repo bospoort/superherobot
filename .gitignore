@@ -41,4 +41,6 @@ config.json
 
 #temp image directory
 images
+
+#vscode settings
 .vscode
