@@ -7,6 +7,8 @@ var constants  = require('./constants.json');
 
 require('dotenv').load();
 
+console.log('====>starting....');
+
 //set up server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3991, function () {

@@ -1,7 +1,7 @@
 {
   "name": "contentmoderationbot",
   "description": "Sample bot to work with Content Moderation",
-  "main": "index.js",
+  "main": "app.js",
   "dependencies": {
     "azure-storage": "^2.1.0",
     "botbuilder": "^3.7.0",
