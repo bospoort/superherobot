@@ -4,9 +4,10 @@ var unirest = require('unirest');
 var azure   = require('azure-storage');
 var util    = require('util');
 var config  = require('./config.json');
+var constants = require('./constants.json');
 
 module.exports.downloadMedia = function(url, dest, cb ){
-    var file = fs.createWriteStream(config.imageFolder+dest);
+    var file = fs.createWriteStream(constants.imageFolder+dest);
     var request = http.get(url, function(response) {
         response.pipe(file);
         file.on('finish', function() {
@@ -19,7 +20,7 @@ module.exports.downloadMedia = function(url, dest, cb ){
 module.exports.uploadMediaToBlob = function(image, cb ){
     var accountName     = config.storageAccountName;
     var accountKey      = config.storageAccountKey;
-    var containerName   = config.containerName;
+    var containerName   = constants.containerName;
     var template        = 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net';
 
     var connectionstring= util.format(template, accountName, accountKey);
@@ -31,12 +32,12 @@ module.exports.uploadMediaToBlob = function(image, cb ){
         if(!error){
             blobService.createBlockBlobFromLocalFile(containerName,
                                                 image, 
-                                                config.imageFolder+image, 
+                                                constants.imageFolder+image, 
                                                 function(error, result, response){
                 if(!error){
                     var blobUrl = util.format("https://%s.blob.core.windows.net/%s/%s", 
                                               config.storageAccountName, 
-                                              config.containerName, 
+                                              constants.containerName, 
                                               image);
                     cb(null,blobUrl);
                 }
@@ -48,7 +49,7 @@ module.exports.uploadMediaToBlob = function(image, cb ){
 module.exports.storeContentIdForUser = function( contentId, address, contentUrl, cb ){
     var accountName     = config.storageAccountName;
     var accountKey      = config.storageAccountKey;
-    var tableName       = config.reviewjobsTableName;
+    var tableName       = constants.reviewjobsTableName;
     var template        = 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net';
 
     var connectionstring= util.format(template, accountName, accountKey);
@@ -76,7 +77,7 @@ module.exports.storeContentIdForUser = function( contentId, address, contentUrl,
 module.exports.retrieveDataUrlforReview = function(contentId, cb ){
     var accountName     = config.storageAccountName;
     var accountKey      = config.storageAccountKey;
-    var tableName       = config.reviewjobsTableName;
+    var tableName       = constants.reviewjobsTableName;
     var template        = 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net';
 
     var connectionstring= util.format(template, accountName, accountKey);

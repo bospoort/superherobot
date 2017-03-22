@@ -4,6 +4,7 @@ var uuid    = require('node-uuid');
 var utils   = require('./utils.js');
 var match   = require('./match.js');
 var config  = require('./config.json');
+var constants  = require('./constants.json');
 
 //set up server
 var server = restify.createServer();
@@ -17,8 +18,8 @@ auth.refreshToken();
 setInterval(auth.refreshToken, 15*60*1000);
 
 var fs = require('fs');
-if (!fs.existsSync(config.imageFolder)){
-    fs.mkdirSync(config.imageFolder);
+if (!fs.existsSync(constants.imageFolder)){
+    fs.mkdirSync(constants.imageFolder);
 }
 
 //this is needed to get body out of restify request...
@@ -65,7 +66,7 @@ server.post('/api/messages', connector.listen());
 
 bot.dialog('/', [ 
     function (session, args) {
-        builder.Prompts.attachment(session, 'Please send me a video clip of you as a superhero.');
+        builder.Prompts.attachment(session, 'Please send me a picture of you as a superhero.');
     },
     function (session, results){
         var contentURL = results.response[0].contentUrl;
@@ -91,7 +92,7 @@ bot.dialog('/', [
 function reviewAndMatch (session, contentid, input){
     var moderate = require('./moderate.js');
 
-    moderate.review( "Image", config.workflow_name, contentid, input, function(err, body) {
+    moderate.review( "Image", constants.workflow_name, contentid, input, function(err, body) {
         if (err) {
             console.log('Error: '+err);         
             session.endDialog('Oops. Something went wrong sending the content for review`.');
@@ -130,12 +131,12 @@ function moderateAndMatch (session, contentid, submittedImageUrl){
 function findHero (message, submittedImageUrl){
     match.getFaceId(submittedImageUrl, function(error, faceId){
         if(error){
-            session.send(error);
+            bot.send(message.text(error.message));
         }
         else {
             match.matchFaceToHero(faceId, function(error, name, confidence, refurl){
                 if (error){
-                    session.send(error);
+                    bot.send(message.text(error.message));
                 }else{
                     // Create and send attachment
                     var attachment = {

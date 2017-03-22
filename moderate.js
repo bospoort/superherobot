@@ -2,12 +2,13 @@
 
 var unirest = require('unirest');
 var config = require('./config.json');
+var constants = require('./constants.json');
 var utils = require('./utils.js');
 var uuid = require('node-uuid');
 var auth = require('./auth.js');
 
 module.exports.review = function(contentType, workflow, contentid, input, cb) {
-    unirest.post(config.review_url+config.moderation_team+'/jobs')
+    unirest.post(constants.review_url+constants.moderation_team+'/jobs')
         .type("application/json")
         .query({
             ContentType: contentType,
@@ -30,7 +31,7 @@ module.exports.review = function(contentType, workflow, contentid, input, cb) {
 module.exports.moderate = function(contentType, input, cb) {
     switch (contentType){
         case 'ImageUrl':{
-            unirest.post(config.moderation_url+'ProcessImage/Evaluate')
+            unirest.post(constants.moderation_url+'ProcessImage/Evaluate')
                 .headers({
                     'content-type': 'application/json',
                     'Ocp-Apim-Subscription-Key':config.ocp_key

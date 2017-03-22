@@ -3,6 +3,7 @@
 var unirest = require("unirest");
 var auth    = require('./auth.js');
 var config  = require('./config.json');
+var constants  = require('./constants.json');
 var utils   = require('./utils.js');
 
 module.exports.getFaceId = function(submittedImageUrl, callback) {
@@ -37,7 +38,7 @@ module.exports.matchFaceToHero = function (faceID, callback){
         })
         .send({
             "faceId":faceID, 
-            "faceListId":"superheroeslistid",  
+            "faceListId":   constants.facelistID,  
             "maxNumOfCandidatesReturned":10,
             "mode": "matchFace" 
         })
@@ -49,7 +50,7 @@ module.exports.matchFaceToHero = function (faceID, callback){
             for  ( var i = 0 ; i < len ; i++){
                 if (list.persistedFaces[i].persistedFaceId === heroId){
                     var hero = list.persistedFaces[i].userData;
-                    var refurl = config.superheroURL+hero+'.jpg';
+                    var refurl = constants.superheroURL+hero+'.jpg';
                     return callback(null, hero, conf, refurl);
                 }
             }
