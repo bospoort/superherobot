@@ -43,4 +43,8 @@ config.json
 images
 
 #vscode settings
-.vscode
+launch.json
+
+# dotenv environment variables file
+.env
+
