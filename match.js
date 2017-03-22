@@ -2,7 +2,6 @@
 
 var unirest = require("unirest");
 var auth    = require('./auth.js');
-var config  = require('./config.json');
 var constants  = require('./constants.json');
 var utils   = require('./utils.js');
 
@@ -14,7 +13,7 @@ module.exports.getFaceId = function(submittedImageUrl, callback) {
             'returnFaceLandmarks': 'false'
         })
         .headers({
-            "Ocp-Apim-Subscription-Key":process.env.faceAPIkey||config.faceAPIkey, 
+            "Ocp-Apim-Subscription-Key":process.env.faceAPIkey, 
             "Content-Type": 'application/json'
         })
         .send({
@@ -33,7 +32,7 @@ module.exports.matchFaceToHero = function (faceID, callback){
     var faceAPIURL = 'https://westus.api.cognitive.microsoft.com/face/v1.0/findsimilars';
     var req = unirest.post(faceAPIURL)
         .headers({
-            "Ocp-Apim-Subscription-Key":process.env.faceAPIkey ||config.faceAPIkey, 
+            "Ocp-Apim-Subscription-Key":process.env.faceAPIkey, 
             "Content-Type": 'application/json'
         })
         .send({

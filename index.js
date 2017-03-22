@@ -3,8 +3,9 @@ var builder = require('botbuilder');
 var uuid    = require('node-uuid');
 var utils   = require('./utils.js');
 var match   = require('./match.js');
-var config  = require('./config.json');
 var constants  = require('./constants.json');
+
+require('dotenv').load();
 
 //set up server
 var server = restify.createServer();

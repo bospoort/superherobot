@@ -1,7 +1,6 @@
 "use strict";
 
 var unirest = require("unirest");
-var config = require('./config.json');
 
 module.exports.token = null;
 
@@ -12,8 +11,8 @@ module.exports.refreshToken = function() {
     })
     .form({
         "resource": "https://api.contentmoderator.cognitive.microsoft.com/review",
-        "client_id": process.env.cm_id||config.cm_id,
-        "client_secret": process.env.cm_key||config.cm_key,
+        "client_id": process.env.cm_id,
+        "client_secret": process.env.cm_key,
         "grant_type": "client_credentials"
     })
     .end(function (res){
