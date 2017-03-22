@@ -17,7 +17,7 @@ module.exports.review = function(contentType, workflow, contentid, input, cb) {
             CallBackEndpoint: 'http://35482930.ngrok.io/review'
         })
         .headers({
-            "Ocp-Apim-Subscription-Key":config.ocp_key, 
+            "Ocp-Apim-Subscription-Key":process.env.ocp_key||config.ocp_key, 
             "authorization": auth.token
         })
         .send({
@@ -34,7 +34,7 @@ module.exports.moderate = function(contentType, input, cb) {
             unirest.post(constants.moderation_url+'ProcessImage/Evaluate')
                 .headers({
                     'content-type': 'application/json',
-                    'Ocp-Apim-Subscription-Key':config.ocp_key
+                    'Ocp-Apim-Subscription-Key':process.env.ocp_key||config.ocp_key
                 })
                 .send({
                     'DataRepresentation': 'URL',
@@ -55,7 +55,7 @@ module.exports.moderate = function(contentType, input, cb) {
                             .type('json')
                             .headers({
                                 'content-type': 'application/json',
-                                'Ocp-Apim-Subscription-Key':config.ocp_key, 
+                                'Ocp-Apim-Subscription-Key':process.env.ocp_key||config.ocp_key, 
                             })
                             .send({
                                 'DataRepresentation': 'URL',

@@ -18,8 +18,8 @@ module.exports.downloadMedia = function(url, dest, cb ){
 
 //upload picture to blob
 module.exports.uploadMediaToBlob = function(image, cb ){
-    var accountName     = config.storageAccountName;
-    var accountKey      = config.storageAccountKey;
+    var accountName     = process.env.storageAccountName ||config.storageAccountName;
+    var accountKey      = process.env.storageAccountKey ||config.storageAccountKey;
     var containerName   = constants.containerName;
     var template        = 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net';
 
@@ -36,7 +36,7 @@ module.exports.uploadMediaToBlob = function(image, cb ){
                                                 function(error, result, response){
                 if(!error){
                     var blobUrl = util.format("https://%s.blob.core.windows.net/%s/%s", 
-                                              config.storageAccountName, 
+                                              process.env.storageAccountName ||config.storageAccountName, 
                                               constants.containerName, 
                                               image);
                     cb(null,blobUrl);
@@ -47,8 +47,8 @@ module.exports.uploadMediaToBlob = function(image, cb ){
 }
 
 module.exports.storeContentIdForUser = function( contentId, address, contentUrl, cb ){
-    var accountName     = config.storageAccountName;
-    var accountKey      = config.storageAccountKey;
+    var accountName     = process.env.storageAccountName ||config.storageAccountName;
+    var accountKey      = process.env.storageAccountKey ||config.storageAccountKey;
     var tableName       = constants.reviewjobsTableName;
     var template        = 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net';
 
@@ -75,8 +75,8 @@ module.exports.storeContentIdForUser = function( contentId, address, contentUrl,
 }
 
 module.exports.retrieveDataUrlforReview = function(contentId, cb ){
-    var accountName     = config.storageAccountName;
-    var accountKey      = config.storageAccountKey;
+    var accountName     = process.env.storageAccountName ||config.storageAccountName;
+    var accountKey      = process.env.storageAccountKey ||config.storageAccountKey;
     var tableName       = constants.reviewjobsTableName;
     var template        = 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net';
 

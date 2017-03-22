@@ -81,8 +81,8 @@ bot.dialog('/', [
                     session.send('Failed to upload image to blob storage.');
                 }
                 else{
-                    //moderateAndMatch(session, contentid, blobURL);
-                    reviewAndMatch(session, contentid, blobURL);
+                    moderateAndMatch(session, contentid, blobURL);
+                    //reviewAndMatch(session, contentid, blobURL);
                 }
             });
         });

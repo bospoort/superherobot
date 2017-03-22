@@ -14,7 +14,7 @@ module.exports.getFaceId = function(submittedImageUrl, callback) {
             'returnFaceLandmarks': 'false'
         })
         .headers({
-            "Ocp-Apim-Subscription-Key":config.faceAPIkey, 
+            "Ocp-Apim-Subscription-Key":process.env.faceAPIkey||config.faceAPIkey, 
             "Content-Type": 'application/json'
         })
         .send({
@@ -33,7 +33,7 @@ module.exports.matchFaceToHero = function (faceID, callback){
     var faceAPIURL = 'https://westus.api.cognitive.microsoft.com/face/v1.0/findsimilars';
     var req = unirest.post(faceAPIURL)
         .headers({
-            "Ocp-Apim-Subscription-Key":config.faceAPIkey, 
+            "Ocp-Apim-Subscription-Key":process.env.faceAPIkey ||config.faceAPIkey, 
             "Content-Type": 'application/json'
         })
         .send({
