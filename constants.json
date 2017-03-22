@@ -1,0 +1,14 @@
+{
+    "moderation_team":  "butterfly",
+    "workflow_name":    "default",
+    "moderation_url":   "https://westus.api.cognitive.microsoft.com/contentmoderator/moderate/v1.0/",
+    "review_url":       "https://westus.api.cognitive.microsoft.com/contentmoderator/review/v1.0/teams/",
+
+    "containerName":       "images",
+    "reviewjobsTableName": "reviewjobs",
+
+    "superheroURL":     "https://superheropictures.blob.core.windows.net/reference/",
+    "faceAPIaccount":   "superheroes",
+    "facelistID":       "superheroeslistid",
+    "imageFolder":      "./images/"
+}   
