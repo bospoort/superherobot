@@ -1,35 +1,49 @@
-var https    = require('https');
+"use strict";
+
 var fs      = require('fs');
 var unirest = require('unirest');
 var azure   = require('azure-storage');
 var util    = require('util');
+var request = require('request');
 var constants = require('./constants.json');
 
-module.exports.downloadMedia = function(url, dest, cb ){
+var cnnstring    = util.format('DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net', 
+                                    process.env.storageAccountName, 
+                                    process.env.storageAccountKey);
+var tableService = azure.createTableService( cnnstring );
+var blobService  = azure.createBlobService( cnnstring );
+
+module.exports.downloadMedia = function(fileurl, token, dest, cb ){
     var file = fs.createWriteStream(constants.imageFolder+dest);
-    var request = https.get(url, function(response) {
-        response.pipe(file);
-        file.on('finish', function() {
+    file.on('finish', function() {
             file.close(cb);
-        });
-    });
+        })
+        .on('error', function(err) {
+            cb(err)
+        });   
+    var headers = {};
+    if(token!==null){//this is passed in ony for Skype for now. 
+        headers['Authorization'] = 'Bearer ' + token;
+        headers['Content-Type']  = 'application/octet-stream';
+    }
+    request
+        .get({
+            url: fileurl,
+            encoding: null,
+            headers: headers
+        })
+        .on('error', function(err) {
+            cb(err)
+        })   
+        .pipe(file);
 }
 
-//upload picture to blob
 module.exports.uploadMediaToBlob = function(image, cb ){
-    var accountName     = process.env.storageAccountName;
-    var accountKey      = process.env.storageAccountKey;
-    var containerName   = constants.containerName;
-    var template        = 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net';
-
-    var connectionstring= util.format(template, accountName, accountKey);
-    var blobService     = azure.createBlobService( connectionstring );
-
-    blobService.createContainerIfNotExists(containerName, 
+    blobService.createContainerIfNotExists(constants.containerName, 
                                         {publicAccessLevel : 'blob'}, 
                                         function(error, result, response){
         if(!error){
-            blobService.createBlockBlobFromLocalFile(containerName,
+            blobService.createBlockBlobFromLocalFile(constants.containerName,
                                                 image, 
                                                 constants.imageFolder+image, 
                                                 function(error, result, response){
@@ -46,15 +60,7 @@ module.exports.uploadMediaToBlob = function(image, cb ){
 }
 
 module.exports.storeContentIdForUser = function( contentId, address, contentUrl, cb ){
-    var accountName     = process.env.storageAccountName;
-    var accountKey      = process.env.storageAccountKey;
-    var tableName       = constants.reviewjobsTableName;
-    var template        = 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net';
-
-    var connectionstring= util.format(template, accountName, accountKey);
-    var tableService    = azure.createTableService( connectionstring );
-
-    tableService.createTableIfNotExists(tableName, 
+    tableService.createTableIfNotExists(constants.reviewjobsTableName, 
                                         function(error, result, response){
         if(!error){
             var entGen = azure.TableUtilities.entityGenerator;
@@ -64,25 +70,21 @@ module.exports.storeContentIdForUser = function( contentId, address, contentUrl,
                 Address:entGen.String(address), 
                 Url: entGen.String(contentUrl)
             };            
-            tableService.insertEntity(tableName, review, function (error, result, response) {
+            tableService.insertEntity(constants.reviewjobsTableName, review, function (error, result, response) {
                 if(!error){
                     cb(null,result);
+                }else{
+                    cb(error.code);
                 }
             });    
+        }else{
+            cb(error.code);
         }
     });
 }
 
 module.exports.retrieveDataUrlforReview = function(contentId, cb ){
-    var accountName     = process.env.storageAccountName;
-    var accountKey      = process.env.storageAccountKey;
-    var tableName       = constants.reviewjobsTableName;
-    var template        = 'DefaultEndpointsProtocol=https;AccountName=%s;AccountKey=%s;EndpointSuffix=core.windows.net';
-
-    var connectionstring= util.format(template, accountName, accountKey);
-    var tableService    = azure.createTableService( connectionstring );
-
-    tableService.createTableIfNotExists(tableName, 
+    tableService.createTableIfNotExists(constants.reviewjobsTableName, 
                                         function(error, result, response){
         if(!error){
             tableService.retrieveEntity(tableName, "fakeid", contentId, function (error, result, response) {
@@ -92,6 +94,8 @@ module.exports.retrieveDataUrlforReview = function(contentId, cb ){
                     cb(error.code);
                 }
             });    
+        }else{
+            cb(error.code);
         }
     });
 }

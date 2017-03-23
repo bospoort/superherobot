@@ -1,13 +1,13 @@
+"use strict";
+//make sure we have all the vars before we start loading modules
+require('dotenv').load();
+
 var restify = require('restify');
 var builder = require('botbuilder');
 var uuid    = require('node-uuid');
 var utils   = require('./utils.js');
 var match   = require('./match.js');
 var constants  = require('./constants.json');
-
-require('dotenv').load();
-
-console.log('====>starting....');
 
 //set up server
 var server = restify.createServer();
@@ -73,22 +73,62 @@ bot.dialog('/', [
     },
     function (session, results){
         var contentURL = results.response[0].contentUrl;
-        var name       = results.response[0].name;
-        var ext        = name.substr(name.lastIndexOf('.'))
         var contentid  = uuid.v1();
-        var fileName   = contentid + ext;
 
-        utils.downloadMedia(contentURL, fileName, function (error) {
-            utils.uploadMediaToBlob(fileName, function(error, blobURL){
-                if (error){
-                    session.send('Failed to upload image to blob storage.');
-                }
-                else{
-                    moderateAndMatch(session, contentid, blobURL);
-                    //reviewAndMatch(session, contentid, blobURL);
-                }
-            });
-        });
+        switch (session.message.source){
+            case 'skype':
+            case 'sfb':{
+                var name       = results.response[0].name;
+                var ext        = name.substr(name.lastIndexOf('.'))
+                var fileName   = contentid + ext;
+                connector.getAccessToken( function (err, token) {
+                    utils.downloadMedia(contentUrl, token, fileName, function (error) {
+                        if (error){
+                            session.send('Failed to upload image to blob storage.');
+                        }
+                        else{
+                            utils.uploadMediaToBlob(fileName, function(error, blobURL){
+                                if (error){
+                                    session.send('Failed to upload image to blob storage.');
+                                }
+                                else{
+                                    moderateAndMatch(session, contentid, blobURL);
+                                    //reviewAndMatch(session, contentid, blobURL);
+                                }
+                            })
+                        }
+                    });                        
+                });
+                break;
+            }
+            case 'emulator':
+            case 'webchat':{
+                var name       = results.response[0].name;
+                var ext        = name.substr(name.lastIndexOf('.'))
+                var fileName   = contentid + ext;
+
+                utils.downloadMedia(contentURL, null, fileName, function (error) {
+                    utils.uploadMediaToBlob(fileName, function(error, blobURL){
+                        if (error){
+                            session.send('Failed to upload image to blob storage.');
+                        }
+                        else{
+                            moderateAndMatch(session, contentid, blobURL);
+                            //reviewAndMatch(session, contentid, blobURL);
+                        }
+                    });
+                });
+                break;
+            }
+            case 'kik':{
+                moderateAndMatch(session, contentid, contentURL);
+                //reviewAndMatch(session, contentid, blobURL);
+                break;
+            }
+            default:{
+                console.log('Dont know how to handle this platform' );
+            }
+        }
     }
 ]);
 
@@ -147,8 +187,11 @@ function findHero (message, submittedImageUrl){
                         contentType: 'image/jpg',
                         name: name
                     };
-                    message.addAttachment(attachment)
-                        .text("You look most like "+ name + ' (confidence: '+ confidence + ')');
+
+                    if ( message.data.source !== 'kik'){//bug in Kik connector; can't send images
+                        message.addAttachment(attachment);
+                    }
+                    message.text("You look most like "+ name );
                     bot.send(message);
                 }
             });

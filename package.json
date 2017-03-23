@@ -7,6 +7,7 @@
     "botbuilder": "^3.7.0",
     "dotenv": "^4.0.0",
     "node-uuid": "^1.4.7",
+    "request": "^2.81.0",
     "restify": "^4.3.0",
     "unirest": "^0.5.1",
     "uuid": "^3.0.1"
