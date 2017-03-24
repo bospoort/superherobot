@@ -129,7 +129,13 @@ function moderateAndMatch (session, contentid, submittedImageUrl){
             findHero(message, submittedImageUrl);
         });
     }else{
-        moderate.review( "Image", constants.workflow_name, contentid, submittedImageUrl, function(err, body) {
+        var reviewCallbackUrl = 'http://35482930.ngrok.io'
+        if (!server.url.startsWith('http://[::]:')) 
+            reviewCallbackUrl = server.url;
+        reviewCallbackUrl = reviewCallbackUrl+'/review';
+        console.log('====> reviewCallbackUrl:' + reviewCallbackUrl);
+
+        moderate.review( "Image", constants.workflow_name, contentid, submittedImageUrl, reviewCallbackUrl, function(err, body) {
             if (err) {
                 console.log('Error: '+err);         
                 return session.endDialog('Oops. Something went wrong sending the content for review`.');
