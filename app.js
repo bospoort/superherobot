@@ -2,12 +2,13 @@
 //make sure we have all the vars before we start loading modules
 require('dotenv').load();
 
-var restify = require('restify');
-var builder = require('botbuilder');
-var uuid    = require('node-uuid');
-var utils   = require('./utils.js');
-var match   = require('./match.js');
-var constants  = require('./constants.json');
+const restify = require('restify');
+const builder = require('botbuilder');
+const uuid    = require('node-uuid');
+const utils   = require('./utils.js');
+const match   = require('./match.js');
+const moderate = require('./moderate.js');
+const constants  = require('./constants.json');
 
 //set up server
 var server = restify.createServer();
@@ -74,101 +75,73 @@ bot.dialog('/', [
     function (session, results){
         var contentURL = results.response[0].contentUrl;
         var contentid  = uuid.v1();
+        var name       = results.response[0].name;
+        var ext        = name.substr(name.lastIndexOf('.'))
+        var fileName   = contentid + ext;
 
         switch (session.message.source){
             case 'skype':
-            case 'sfb':{
-                var name       = results.response[0].name;
-                var ext        = name.substr(name.lastIndexOf('.'))
-                var fileName   = contentid + ext;
+            case 'sfb':
                 connector.getAccessToken( function (err, token) {
-                    utils.downloadMedia(contentUrl, token, fileName, function (error) {
-                        if (error){
-                            session.send('Failed to upload image to blob storage.');
-                        }
-                        else{
-                            utils.uploadMediaToBlob(fileName, function(error, blobURL){
-                                if (error){
-                                    session.send('Failed to upload image to blob storage.');
-                                }
-                                else{
-                                    moderateAndMatch(session, contentid, blobURL);
-                                    //reviewAndMatch(session, contentid, blobURL);
-                                }
-                            })
-                        }
-                    });                        
-                });
-                break;
-            }
-            case 'emulator':
-            case 'webchat':{
-                var name       = results.response[0].name;
-                var ext        = name.substr(name.lastIndexOf('.'))
-                var fileName   = contentid + ext;
-
-                utils.downloadMedia(contentURL, null, fileName, function (error) {
-                    utils.uploadMediaToBlob(fileName, function(error, blobURL){
-                        if (error){
-                            session.send('Failed to upload image to blob storage.');
-                        }
-                        else{
+                    utils.downloadMedia(contentURL, token, fileName, function (error) {
+                        utils.uploadMediaToBlob(fileName, function(error, blobURL){
+                            if (error)
+                                return session.endDialog('Failed to upload image to blob storage.');
                             moderateAndMatch(session, contentid, blobURL);
-                            //reviewAndMatch(session, contentid, blobURL);
-                        }
+                        });
                     });
                 });
                 break;
-            }
-            case 'kik':{
-                moderateAndMatch(session, contentid, contentURL);
-                //reviewAndMatch(session, contentid, blobURL);
+            case 'emulator':
+            case 'webchat':
+                utils.downloadMedia(contentURL, null, fileName, function (error) {
+                    utils.uploadMediaToBlob(fileName, function(error, blobURL){
+                        if (error)
+                            return session.endDialog('Failed to upload image to blob storage.');
+                        moderateAndMatch(session, contentid, blobURL);
+                    });
+                });
                 break;
-            }
-            default:{
+            case 'kik':
+                moderateAndMatch(session, contentid, contentURL);
+                break;
+            default:
                 console.log('Dont know how to handle this platform' );
-            }
+                session.send('This appears to be an unsupported platform.');
         }
     }
 ]);
 
-function reviewAndMatch (session, contentid, input){
-    var moderate = require('./moderate.js');
-
-    moderate.review( "Image", constants.workflow_name, contentid, input, function(err, body) {
-        if (err) {
-            console.log('Error: '+err);         
-            session.endDialog('Oops. Something went wrong sending the content for review`.');
-            return;
-        }
-        console.log('=====Submitted for review: ' + contentid);
-
-        //now store the address, so we can pick up the conversation later
-        var address = JSON.stringify(session.message.address);
-        utils.storeContentIdForUser(contentid, address, input, function(result){
-            session.endDialog('Your submission is in review.');
-        });
-    });
-}
-
 function moderateAndMatch (session, contentid, submittedImageUrl){
-    var moderate = require('./moderate.js');
-    moderate.moderate( 'ImageUrl', submittedImageUrl, function(err, body) {
-        if (err) {
-            console.log('Error: '+err);         
-            session.endDialog('Oops. Something went wrong in Content Moderation.');
-            return;
-        }
-        var output = JSON.stringify(body);
+    if (process.env.moderationMode==='moderation'){
+        moderate.moderate( 'ImageUrl', submittedImageUrl, function(err, body) {
+            if (err) {
+                console.log('Error: '+err);         
+                return session.endDialog('Oops. Something went wrong in Content Moderation.');
+            }
+            var output = JSON.stringify(body);
 
-        //if racy or adult bounce back
-        if (body.IsImageAdultClassified || body.IsImageRacyClassified){
-            session.send('This picture is a bit too daring. No go');
-            return;
-        }
-        var message = new builder.Message(session);
-        findHero(message, submittedImageUrl);
-    });
+            //if racy or adult bounce back
+            if (body.IsImageAdultClassified || body.IsImageRacyClassified){
+                return session.send('This picture is a bit too daring. No go');
+            }
+            var message = new builder.Message(session);
+            findHero(message, submittedImageUrl);
+        });
+    }else{
+        moderate.review( "Image", constants.workflow_name, contentid, submittedImageUrl, function(err, body) {
+            if (err) {
+                console.log('Error: '+err);         
+                return session.endDialog('Oops. Something went wrong sending the content for review`.');
+            }
+            console.log('=====Submitted for review: ' + contentid);
+            //now store the address, so we can pick up the conversation later
+            var address = JSON.stringify(session.message.address);
+            utils.storeContentIdForUser(contentid, address, submittedImageUrl, function(result){
+                session.endDialog('Your submission is in review.');
+            });
+        });
+    }
 }
 
 function findHero (message, submittedImageUrl){
@@ -187,11 +160,10 @@ function findHero (message, submittedImageUrl){
                         contentType: 'image/jpg',
                         name: name
                     };
-
                     if ( message.data.source !== 'kik'){//bug in Kik connector; can't send images
                         message.addAttachment(attachment);
                     }
-                    message.text("You look most like "+ name );
+                    message.text("You have a cunning resemblance with "+ name );
                     bot.send(message);
                 }
             });

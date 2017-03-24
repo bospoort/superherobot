@@ -87,7 +87,7 @@ module.exports.retrieveDataUrlforReview = function(contentId, cb ){
     tableService.createTableIfNotExists(constants.reviewjobsTableName, 
                                         function(error, result, response){
         if(!error){
-            tableService.retrieveEntity(tableName, "fakeid", contentId, function (error, result, response) {
+            tableService.retrieveEntity(constants.reviewjobsTableName, "fakeid", contentId, function (error, result, response) {
                 if(!error){
                     cb(null,result.Address._, result.Url._);
                 }else{
