@@ -13,7 +13,9 @@ const constants  = require('./constants.json');
 //set up server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3991, function () {
-   console.log('%s listening to %s', server.name, server.url); 
+    console.log('%s listening to %s', server.name, server.url); 
+
+    console.log ( require("os").hostname() );  
 });
 
 //get a token for CM and refresh periodically
@@ -70,7 +72,7 @@ server.post('/api/messages', connector.listen());
 
 bot.dialog('/', [ 
     function (session, args) {
-        builder.Prompts.attachment(session, 'Please send me a picture of you as a superhero.');
+        builder.Prompts.attachment(session, require("os").hostname());
     },
     function (session, results){
         var contentURL = results.response[0].contentUrl;
