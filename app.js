@@ -70,10 +70,7 @@ server.post('/api/messages', connector.listen());
 
 bot.dialog('/', [ 
     function (session, args) {
-        console.log('net.Server.address() === ' + 
-            require('util').inspect(server.server.address())); 
-      //  builder.Prompts.attachment(session, 'Please send me a picture of you as a superhero.');
-        builder.Prompts.attachment(session, server.server.address());
+       builder.Prompts.attachment(session, 'Please send me a picture of you as a superhero.');
     },
     function (session, results){
         var contentURL = results.response[0].contentUrl;

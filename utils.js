@@ -1,7 +1,5 @@
 "use strict";
-
 var fs      = require('fs');
-var unirest = require('unirest');
 var azure   = require('azure-storage');
 var util    = require('util');
 var request = require('request');
