@@ -1,6 +1,5 @@
 "use strict";
 
-var unirest = require("unirest");
 var request = require("request");
 var auth    = require('./auth.js');
 var constants  = require('./constants.json');
