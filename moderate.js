@@ -1,54 +1,34 @@
 'use strict';
 
-var unirest = require('unirest');
-var constants = require('./constants.json');
-var utils = require('./utils.js');
-var uuid = require('node-uuid');
-var auth = require('./auth.js');
+var uuid    = require('node-uuid');
 var request = require('request');
+var utils   = require('./utils.js');
+var auth    = require('./auth.js');
+var constants = require('./constants.json');
 
 module.exports.review = function(contentType, workflow, contentid, input, serverUrl, cb) {
-    unirest.post(constants.review_url+constants.moderation_team+'/jobs')
-        .type("application/json")
-        .query({
+    var options = {
+        url: constants.review_url+constants.moderation_team+'/jobs',
+        qs:{
             ContentType: contentType,
             ContentId: contentid,
             WorkflowName: workflow,
             CallBackEndpoint: serverUrl
-        })
-        .headers({
+        },
+        headers: {
             "Ocp-Apim-Subscription-Key":process.env.ocp_key, 
             "authorization": auth.token
-        })
-        .send({
+        },
+        body: {
             "ContentValue": input
-        })
-        .end(function (res) {
-            return cb(res.error, res.body );
-        });
+        },
+        json: true,
+        method: 'post'
+    };
+    request(options, function(err, res, body){
+        return cb(err, res.body );
+    })   
 }
-
-module.exports.moderate1 = function(contentType, input, cb) {
-    switch (contentType){
-        case 'ImageUrl':{
-            unirest.post(constants.moderation_url+'ProcessImage/Evaluate')
-                .headers({
-                    'content-type': 'application/json',
-                    'Ocp-Apim-Subscription-Key':process.env.ocp_key
-                })
-                .send({
-                    'DataRepresentation': 'URL',
-                    'Value': input
-                })
-                .end(function (res) {
-                    return cb(res.error, res.body );
-                });
-            break;
-        }
-        default:
-            break;
-    }
-};
 
 module.exports.moderate = function(contentType, input, cb) {
     switch (contentType){
