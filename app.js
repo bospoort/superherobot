@@ -131,10 +131,7 @@ function moderateAndMatch (session, contentid, submittedImageUrl){
             findHero(message, submittedImageUrl);
         });
     }else{
-        var reviewCallbackUrl = 'http://35482930.ngrok.io'
-        if (!server.url.startsWith('http://[::]:')) 
-            reviewCallbackUrl = server.url;
-        reviewCallbackUrl = reviewCallbackUrl+'/review';
+        reviewCallbackUrl = process.env.WEBSITE_HOSTNAME+'/review';
         console.log('====> reviewCallbackUrl:' + reviewCallbackUrl);
 
         moderate.review( "Image", constants.workflow_name, contentid, submittedImageUrl, reviewCallbackUrl, function(err, body) {

@@ -6,14 +6,14 @@ var utils   = require('./utils.js');
 var auth    = require('./auth.js');
 var constants = require('./constants.json');
 
-module.exports.review = function(contentType, workflow, contentid, input, serverUrl, cb) {
+module.exports.review = function(contentType, workflow, contentid, input, reviewCallbackUrl, cb) {
     var options = {
         url: constants.review_url+constants.moderation_team+'/jobs',
         qs:{
             ContentType: contentType,
             ContentId: contentid,
             WorkflowName: workflow,
-            CallBackEndpoint: serverUrl
+            CallBackEndpoint: reviewCallbackUrl
         },
         headers: {
             "Ocp-Apim-Subscription-Key":process.env.ocp_key, 
