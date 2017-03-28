@@ -131,9 +131,7 @@ function moderateAndMatch (session, contentid, submittedImageUrl){
             findHero(message, submittedImageUrl);
         });
     }else{
-        reviewCallbackUrl = process.env.WEBSITE_HOSTNAME+'/review';
-        console.log('====> reviewCallbackUrl:' + reviewCallbackUrl);
-
+        var reviewCallbackUrl = process.env.WEBSITE_HOSTNAME+'/review';
         moderate.review( "Image", constants.workflow_name, contentid, submittedImageUrl, reviewCallbackUrl, function(err, body) {
             if (err) {
                 console.log('Error: '+err);         
@@ -168,7 +166,8 @@ function findHero (message, submittedImageUrl){
                     if ( message.data.source !== 'kik'){//bug in Kik connector; can't send images
                         message.addAttachment(attachment);
                     }
-                    message.text("You have a cunning resemblance with "+ name );
+                    message.text("You have a striking resemblance to "+ name );
+                    console.log('Confidence: '+confidence);
                     bot.send(message);
                 }
             });
