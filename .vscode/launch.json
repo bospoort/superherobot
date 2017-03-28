@@ -21,7 +21,7 @@
             "env": {
                 "NODE_ENV": "development",
                 "port": "12346",
-                "apple": "last"
+                "WEBSITE_HOSTNAME": "https://f9374635.ngrok.io"
             },
             "console": "internalConsole",
             "sourceMaps": false,

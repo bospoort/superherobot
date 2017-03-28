@@ -13,13 +13,15 @@ const constants  = require('./constants.json');
 //set up server
 var server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3991, function () {
-    console.log('%s listening to %s', server.name, server.url); 
+    console.log('%s listening to %s', server.name, process.env.WEBSITE_HOSTNAME); 
 });
 
 //get a token for CM and refresh periodically
 var auth = require('./auth.js');
 auth.refreshToken();
 setInterval(auth.refreshToken, 15*60*1000);
+
+console.log(process.env.WEBSITE_HOSTNAME);
 
 var fs = require('fs');
 if (!fs.existsSync(constants.imageFolder)){
@@ -62,7 +64,7 @@ server.post('/review', function create(req, res, next) {
 });
 
 var connector = new builder.ChatConnector({
-    appId: process.env.MICROSOFT_APP_ID,
+    appId:       process.env.MICROSOFT_APP_ID,
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
 var bot = new builder.UniversalBot(connector);
