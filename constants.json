@@ -7,7 +7,6 @@
     "containerName":       "images",
     "reviewjobsTableName": "reviewjobs",
 
-    "superheroURL":     "https://superheropictures.blob.core.windows.net/reference/",
     "faceAPIaccount":   "superheroes",
     "facelistID":       "superheroeslistid",
     "imageFolder":      "./images/"
