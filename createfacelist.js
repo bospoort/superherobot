@@ -2,10 +2,11 @@
 require('dotenv').load();
 var request = require('request');
 var futures = require('futures');
+var constants = require('./constants.json');
 
 function createFaceList(cb){
-    console.log("First delete the list : "+process.env.facelistID);
-    var listUrl = "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+process.env.facelistID;
+    console.log("First delete the list : "+constants.facelistID);
+    var listUrl = "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+constants.facelistID;
     var options = {
         url: listUrl,
         headers: {
@@ -15,9 +16,9 @@ function createFaceList(cb){
     };
     request(options, function(err, res, body){
         if(err) return cb(err);
-        console.log("Then create the list : "+process.env.facelistID);
+        console.log("Then create the list : "+constants.facelistID);
         var options = {
-            url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+process.env.facelistID,
+            url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+constants.facelistID,
             headers: {
                 'content-type':'application/json',
                 'Ocp-Apim-Subscription-Key': process.env.faceAPIkey
@@ -41,7 +42,7 @@ function addFace(element, cb){
         url: element.url
     };
     var options = {
-        url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+process.env.facelistID+"/persistedFaces",
+        url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+constants.facelistID+"/persistedFaces",
         qs: {
             'userData':JSON.stringify(userData)
         },
@@ -63,7 +64,7 @@ function addFace(element, cb){
 function getFaceList(cb){
     console.log("===>get list");
     var options = {
-        url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+process.env.facelistID,
+        url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+constants.facelistID,
         headers: {
             'Ocp-Apim-Subscription-Key': process.env.faceAPIkey
         },

@@ -20,7 +20,7 @@ module.exports.downloadMedia = function(fileurl, token, dest, cb ){
             cb(err)
         });   
     var headers = {};
-    if(token!==null){//this is passed in ony for Skype for now. 
+    if(token!==null){//this is passed in only for Skype for now. 
         headers['Authorization'] = 'Bearer ' + token;
         headers['Content-Type']  = 'application/octet-stream';
     }
