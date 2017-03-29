@@ -53,13 +53,12 @@ module.exports.matchFaceToHero = function (faceID, callback){
         }else{
             var heroId  = res.body[0].persistedFaceId;      
             var conf    = res.body[0].confidence;
-            var list    = require('./superheroeslistid.json');
+            var list    = require('./faceListWithId.json');
             var len     = list.persistedFaces.length;
             for  ( var i = 0 ; i < len ; i++){
                 if (list.persistedFaces[i].persistedFaceId === heroId){
-                    var hero = list.persistedFaces[i].userData;
-                    var refurl = constants.superheroURL+hero+'.jpg';
-                    return callback(null, hero, conf, refurl);
+                    var hero = JSON.parse(list.persistedFaces[i].userData);
+                    return callback(null, hero.name, conf, hero.url);
                 }
             }
             return callback("Could not find a match..." );

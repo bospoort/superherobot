@@ -1,40 +1,56 @@
 "use strict";
-//make sure we have all the vars before we start loading modules
 require('dotenv').load();
 var request = require('request');
+var futures = require('futures');
 
 function createFaceList(cb){
-    console.log("Create list");
+    console.log("First delete the list : "+process.env.facelistID);
+    var listUrl = "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+process.env.facelistID;
     var options = {
-        url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/techgiants",
+        url: listUrl,
         headers: {
-            'content-type':'application/json',
             'Ocp-Apim-Subscription-Key': process.env.faceAPIkey
         },
-        body: {
-            'name': 'Tech Giants'
-        },
-        json: true,
-        method: 'put'
+        method: 'delete'
     };
     request(options, function(err, res, body){
-        return cb(err, res.body );
-    })   
+        if(err) return cb(err);
+        console.log("Then create the list : "+process.env.facelistID);
+        var options = {
+            url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+process.env.facelistID,
+            headers: {
+                'content-type':'application/json',
+                'Ocp-Apim-Subscription-Key': process.env.faceAPIkey
+            },
+            body: {
+                'name': 'List'
+            },
+            json:   true,
+            method: 'put'
+        };
+        request(options, function(err, res, body){
+            return cb(err, res.body );
+        })   
+    });
 }
 
-function addFace(name, url, cb){
-    console.log("===>add face");
+function addFace(element, cb){
+    console.log("===>add face: "+element.name);
+    var userData = {
+        name: element.name,
+        url: element.url
+    };
     var options = {
-        url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/techgiants/persistedFaces",
+        url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+process.env.facelistID+"/persistedFaces",
         qs: {
-            'userData':name
+            'userData':JSON.stringify(userData)
         },
         headers: {
             'content-type':'application/json',
             'Ocp-Apim-Subscription-Key': process.env.faceAPIkey
         },
         body: {
-            'url': url
+            'url': element.url
         },
         json: true,
         method: 'post'
@@ -47,7 +63,7 @@ function addFace(name, url, cb){
 function getFaceList(cb){
     console.log("===>get list");
     var options = {
-        url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/techgiants",
+        url: "https://westus.api.cognitive.microsoft.com/face/v1.0/facelists/"+process.env.facelistID,
         headers: {
             'Ocp-Apim-Subscription-Key': process.env.faceAPIkey
         },
@@ -60,14 +76,21 @@ function getFaceList(cb){
 }
 
 createFaceList(function(err, body){
-    console.log(body);
-    addFace("Jeff Bezos", 
-            "http://1u88jj3r4db2x4txp44yqfj1.wpengine.netdna-cdn.com/wp-content/uploads/2016/05/Jeff-Bezos-04-930x523.png",
-            function(err, body){
+    var forEachAsync = futures.forEachAsync;
+
+    var list    = require('./sampleFaces.json');
+    forEachAsync(list.sampleFaces, function (next, element, index, array) {
+        addFace(element, next);
+    })
+    .then(function () {
+        getFaceList(function(err,body){
+            var fs = require('fs');
+            fs.writeFile("faceListWithId.json", JSON.stringify(body), function(err) {
+                if(err) {
+                    return console.log(err);
+                }
                 console.log(body);
-                getFaceList(function(err,body){
-                    console.log(body);
-                })
-            }
-    );
+            });
+        });
+    });
 });

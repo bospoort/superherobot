@@ -21,7 +21,7 @@
             "env": {
                 "NODE_ENV": "development",
                 "port": "12346",
-                "WEBSITE_HOSTNAME": "https://f9374635.ngrok.io"
+                "WEBSITE_HOSTNAME": "https://be827c42.ngrok.io"
             },
             "console": "internalConsole",
             "sourceMaps": false,

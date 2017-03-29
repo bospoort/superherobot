@@ -132,6 +132,7 @@ function moderateAndMatch (session, contentid, submittedImageUrl){
         });
     }else{
         var reviewCallbackUrl = process.env.WEBSITE_HOSTNAME+'/review';
+        console.log(reviewCallbackUrl);
         moderate.review( "Image", constants.workflow_name, contentid, submittedImageUrl, reviewCallbackUrl, function(err, body) {
             if (err) {
                 console.log('Error: '+err);         

@@ -1,0 +1,29 @@
+{
+  "sampleFaces": [
+    {
+      "name": "Bill Gates",
+      "url": "https://betanews.com/wp-content/uploads/2014/01/Bill-gates.jpg"
+    },
+    {
+      "name": "Satya Nadella",
+      "url": "https://betanews.com/wp-content/uploads/2014/01/Bill-gates.jpg"
+    },
+    {
+      "name": "Jeff Bezos",
+      "url": "http://static6.businessinsider.com/image/533c613becad04652e0a1aad-1200-900/jeff-bezos-2.png"
+    },
+    {
+      "name": "Mark Zuckerberg",
+      "url": "http://st1.bgr.in/wp-content/uploads/2015/09/mark-zuckerberg-facebook.jpg"
+    },
+    {
+      "name": "Larry Page",
+      "url": "http://static6.businessinsider.com/image/53738d0c69beddcc5711f702-960/larry-page-google.jpg"
+    },
+    {
+      "name": "Larry Ellison",
+      "url": "http://static5.businessinsider.com/image/53a06bfeeab8ea9e660bc502-1190-625/larry-ellison-just-spent-an-hour-trashing-amazons-10-billion-cloud.jpg"
+    }
+  ],
+  "name": "Tech Giants"
+}

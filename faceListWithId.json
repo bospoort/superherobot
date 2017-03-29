@@ -1,0 +1,31 @@
+{
+    "persistedFaces": [
+        {
+            "persistedFaceId": "bed0a73d-6b70-45e7-a040-0a9ec2012714",
+            "userData": "{\"name\":\"Bill Gates\",\"url\":\"https://betanews.com/wp-content/uploads/2014/01/Bill-gates.jpg\"}"
+        },
+        {
+            "persistedFaceId": "1dee652c-6b56-4e0b-8f27-c678bbe67e5d",
+            "userData": "{\"name\":\"Satya Nadella\",\"url\":\"https://betanews.com/wp-content/uploads/2014/01/Bill-gates.jpg\"}"
+        },
+        {
+            "persistedFaceId": "d9916130-09bf-42aa-ae04-a4122178f234",
+            "userData": "{\"name\":\"Jeff Bezos\",\"url\":\"http://static6.businessinsider.com/image/533c613becad04652e0a1aad-1200-900/jeff-bezos-2.png\"}"
+        },
+        {
+            "persistedFaceId": "3685d21f-5ac7-4710-9249-98bf8d528e26",
+            "userData": "{\"name\":\"Mark Zuckerberg\",\"url\":\"http://st1.bgr.in/wp-content/uploads/2015/09/mark-zuckerberg-facebook.jpg\"}"
+        },
+        {
+            "persistedFaceId": "5b31330f-1379-4366-867c-e9b7024d6975",
+            "userData": "{\"name\":\"Larry Page\",\"url\":\"http://static6.businessinsider.com/image/53738d0c69beddcc5711f702-960/larry-page-google.jpg\"}"
+        },
+        {
+            "persistedFaceId": "db154468-f096-4652-8f2b-f6c1ea5fcbfd",
+            "userData": "{\"name\":\"Larry Ellison\",\"url\":\"http://static5.businessinsider.com/image/53a06bfeeab8ea9e660bc502-1190-625/larry-ellison-just-spent-an-hour-trashing-amazons-10-billion-cloud.jpg\"}"
+        }
+    ],
+    "faceListId": "superheroeslistid",
+    "name": "List",
+    "userData": null
+}
